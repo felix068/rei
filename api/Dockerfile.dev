@@ -1,0 +1,10 @@
+FROM golang:1.24-alpine
+RUN go install github.com/bokwoon95/wgo@latest
+
+WORKDIR /app
+
+RUN COPY ./
+RUN go mod download
+
+EXPOSE 1323
+CMD wgo run ./cmd/server.go
