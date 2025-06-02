@@ -30,3 +30,5 @@ services:
       postgres:
         condition: service_healthy
 
+volumes:
+  db:

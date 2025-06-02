@@ -3,7 +3,7 @@ RUN go install github.com/bokwoon95/wgo@latest
 
 WORKDIR /app
 
-RUN COPY ./
+COPY go.sum go.mod ./
 RUN go mod download
 
 EXPOSE 1323
