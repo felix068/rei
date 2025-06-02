@@ -10,11 +10,11 @@ type Reader struct {
 	feedReader *gofeed.Parser
 }
 
-func NewParser() Reader {
-	return Reader{gofeed.NewParser()}
+func NewParser() *Reader {
+	return &Reader{gofeed.NewParser()}
 }
 
-func (r Reader) ReadFeed(url string) (*gofeed.Feed, error) {
+func (r *Reader) ReadFeed(url string) (*gofeed.Feed, error) {
 	feed, err := r.feedReader.ParseURL(url)
 
 	if err != nil {

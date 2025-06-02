@@ -1,24 +1,16 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"rei-api"
+	"rei-api/services"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
-	"github.com/mmcdole/gofeed"
+	_ "github.com/lib/pq"
 )
-
-func addFeed(c echo.Context) error {
-	rss_link := c.FormValue("rss_link")
-	reader := rei.NewParser()
-	feed, _ := reader.ReadFeed(rss_link)
-	// name := feed.Title
-	link := feed.Link
-
-	//save in db the relevant content
-	// author, link, description etc
-	return c.JSON(http.StatusOK, link)
-}
 
 func main() {
 	e := echo.New()
@@ -26,18 +18,17 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.GET("/feeds", func(c echo.Context) error {
-		// it should get custom feeds from a user
-		fp := gofeed.NewParser()
-		feed, _ := fp.ParseURL("https://www.gmkonan.dev/rss.xml")
-		feeds := feed.Items
-		return c.JSON(http.StatusOK, feeds)
-	})
+	connection := os.Getenv("DATABASE_URL")
+	db, err := sqlx.Open("postgres", connection)
+	if err != nil {
+		log.Fatal("Connection with postgres database failed: ", err)
+	}
+	defer db.Close()
 
-	// add feed that user inputed
-	// parse the rss and save relevant content
-	e.POST("/add_feed", addFeed)
+	reader := rei.NewParser()
 
-	// get all feeds from user
+	fh := services.FeedHandler(db, reader)
+	fh.RegisterFeedsRoutes(e)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
