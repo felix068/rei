@@ -15,6 +15,9 @@ type Handler struct {
 	db     *sqlx.DB
 	reader *rei.Reader
 }
+type RssLink struct {
+	Link string `json:"link"`
+}
 
 type Feed struct {
 	Id          uuid.UUID `json:"id" db:"id"`
@@ -33,21 +36,45 @@ func FeedHandler(dbClient *sqlx.DB, reader *rei.Reader) *Handler {
 }
 
 func (h *Handler) addFeed(c echo.Context) error {
-	rss_link := c.FormValue("rss_link")
-	feed, _ := h.reader.ReadFeed(rss_link)
-	// name := feed.Title
-	link := feed.Link
+	rssInput := new(RssLink)
+	c.Bind(rssInput)
 
-	//save in db the relevant content
-	// author, link, description etc
-	var feedq Feed
-	h.db.Get(&feed, "SELECT * FROM feeds")
+	fmt.Println(rssInput.Link)
+	feed, _ := h.reader.ReadFeed(rssInput.Link)
+	uuid := uuid.New()
 
-	fmt.Println("feeds", feedq.Name)
+	// The sqlx library converts the named parameters (:name) to PostgreSQL's numbered format ($1, $2, etc.) behind the scenes.
+	insertFeed := `INSERT INTO feeds (id, name, description, link, created_at, updated_at) 
+	VALUES (:id, :name, :description, :link, :createdAt, :updatedAt)`
 
-	return c.JSON(http.StatusOK, link)
+	_, err := h.db.NamedExec(insertFeed, map[string]interface{}{
+		"id":          uuid,
+		"name":        feed.Title,
+		"description": feed.Description,
+		"link":        feed.Link,
+		"createdAt":   time.Now(),
+		"updatedAt":   time.Now(),
+	})
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusCreated, feed.Link)
+}
+
+func (h *Handler) listFeeds(c echo.Context) error {
+	// wip
+	var feeds Feed
+	h.db.Get(&feeds, "SELECT * FROM feeds")
+
+	fmt.Println("feeds", feeds.Name)
+
+	return c.JSON(http.StatusCreated, feeds)
+
 }
 
 func (h *Handler) RegisterFeedsRoutes(e *echo.Echo) {
 	e.POST("/add_feed", h.addFeed)
+	e.GET("/list_feeds", h.listFeeds)
 }
