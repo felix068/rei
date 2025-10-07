@@ -33,7 +33,7 @@ Main application entry point:
 - Sets up CORS middleware
 - Connects to PostgreSQL
 - Registers routes
-- Starts background sync goroutine (every 15 min)
+- Starts background sync goroutine (every 5 min)
 
 ### 2. Feed Service (`services/feeds.go`)
 
@@ -97,7 +97,7 @@ updated_at  TIMESTAMP NOT NULL
 ## Key Features
 
 ### Automatic Sync
-Background goroutine syncs all feeds every 15 minutes:
+Background goroutine syncs all feeds every 5 minutes:
 1. Fetches all feeds from database
 2. For each feed, fetches RSS and checks for new posts
 3. Inserts only posts that don't exist (by unique link)
