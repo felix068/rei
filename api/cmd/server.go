@@ -6,6 +6,7 @@ import (
 	"os"
 	"rei-api"
 	"rei-api/services"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
@@ -35,6 +36,20 @@ func main() {
 
 	fh := services.FeedHandler(db, reader)
 	fh.RegisterFeedsRoutes(e)
+
+	// Start automatic sync in background goroutine
+	go func() {
+		// Wait a bit before first sync to let server start
+		time.Sleep(30 * time.Second)
+
+		for {
+			log.Println("Starting automatic feed sync...")
+			fh.SyncAllFeeds()
+
+			// Sync every 5 minutes
+			time.Sleep(5 * time.Minute)
+		}
+	}()
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

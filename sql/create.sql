@@ -16,6 +16,7 @@ name text not null,
 description text,
 link text unique,
 feed_id uuid not null,
+is_read boolean not null default false,
 created_at timestamp not null,
 updated_at timestamp not null
 );

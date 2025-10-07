@@ -1,7 +1,7 @@
 services:
   postgres:
-    image: postgres
-    restart: on-failure
+    image: postgres:15
+    restart: unless-stopped
     ports:
       - 5432:5432
     volumes:
@@ -21,14 +21,22 @@ services:
       dockerfile: Dockerfile
     ports:
       - 1323:1323
-    volumes:
-      - ./api:/app
     env_file:
       - ./.env
-    restart: on-failure
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    restart: unless-stopped
+    depends_on:
+      - api
 
 volumes:
   db:

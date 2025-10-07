@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+/* Force disable DarkReader and other extensions */
+html,
+body,
+#root {
+	background-color: #ffffff !important;
+	color: #000000 !important;
+}
+
+html.dark,
+html.dark body,
+html.dark #root {
+	background-color: #1a1a1a !important;
+	color: #ffffff !important;
+}
+
+/* Prevent extensions from modifying colors */
+* {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
