@@ -12,8 +12,7 @@ A fast, self-hosted RSS feed reader for local usage
 ## Features
 
 - 📰 **Subscribe to RSS feeds** - Add any RSS/Atom feed
-- 🔄 **Automatic sync** - New posts fetched every 15 minutes
-- ✅ **Mark as read** - Track what you've already seen
+- 🔄 **Automatic sync** - New posts fetched every 5 minutes
 - 🌓 **Dark/Light theme** - Easy on the eyes, day or night
 - 📱 **Responsive** - Works on desktop, tablet, and mobile
 - 🔍 **Sort & Filter** - By date, feed name, or alphabetically
