@@ -128,10 +128,6 @@ From Docker, use: `http://host.docker.internal:8000/feed.xml`
 - [API Documentation](./api/README.md)
 - [Web Documentation](./web/README.md)
 
-## License
-
-MIT License - see LICENSE file for details
-
 ## Contributing
 
 Contributions welcome! Open issues or pull requests.
